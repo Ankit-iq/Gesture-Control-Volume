@@ -3,35 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hand Gesture Volume Control</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Gesture Control Volume</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to CSS file -->
 </head>
 <body>
     <div class="container">
-        <h1 class="neon-text">Hand Gesture Volume Control</h1>
+        <h1>Gesture Control Volume</h1>
         <div class="video-container">
-            <img src="{{ url_for('video_feed') }}" id="video" alt="Video Feed">
+            <h2>Webcam Feed</h2>
+            <img id="video" src="{{ url_for('video_feed') }}" alt="Video Feed">
         </div>
-        <div class="controls">
-            <h2 class="neon-text">Current Volume: <span id="volume-level">50</span>%</h2>
-            <button class="neon-button" onclick="muteVolume()">Mute</button>
+        <div class="volume-display">
+            <h2>Current Volume Level: <span id="volume-level">{{ volume }}</span></h2>
         </div>
+        <button id="refresh-btn" onclick="refreshVolume()">Refresh Volume</button>
     </div>
+
     <script>
-        function updateVolume() {
+        function refreshVolume() {
             fetch('/volume')
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('volume-level').innerText = data.volume;
-                });
+                    document.getElementById('volume-level').textContent = data.volume;
+                })
+                .catch(error => console.error('Error fetching volume:', error));
         }
 
-        function muteVolume() {
-            document.getElementById('volume-level').innerText = "0";
-            // Optionally, you can implement the mute action here if needed
-        }
-
-        setInterval(updateVolume, 1000); // Update volume every second
+        // Automatically refresh volume level every 5 seconds
+        setInterval(refreshVolume, 5000);
     </script>
 </body>
 </html>

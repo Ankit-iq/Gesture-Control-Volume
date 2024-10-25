@@ -3,6 +3,8 @@ import cv2
 import mediapipe as mp
 import pyautogui
 import os
+import threading
+import speech_recognition as sr
 
 app = Flask(__name__)
 
@@ -14,12 +16,15 @@ drawing_utils = mp.solutions.drawing_utils
 # Initial volume level
 current_volume = 50  # Initialize volume at 50%
 
+
 def set_volume(volume):
     global current_volume
     current_volume = volume
 
+
 def get_volume():
     return current_volume
+
 
 def gen_frames():
     webcam = cv2.VideoCapture(0)
@@ -66,19 +71,60 @@ def gen_frames():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/video_feed')
 def video_feed():
     return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
+
 @app.route('/volume')
 def volume():
     return jsonify(volume=get_volume())
 
+
+def listen_for_voice_commands():
+    recognizer = sr.Recognizer()
+    mic = sr.Microphone()
+
+    while True:
+        with mic as source:
+            recognizer.adjust_for_ambient_noise(source)  # Adjust for ambient noise
+            print("Listening for commands...")  # Debug statement
+            audio = recognizer.listen(source)
+
+        try:
+            command = recognizer.recognize_google(audio)
+            print(f"You said: {command}")  # Debug statement
+
+            if "Computer increase volume" in command.lower():
+                set_volume(current_volume + 5)
+                pyautogui.press("volumeup")
+            elif "Computer Decrease volume" in command.lower():
+                set_volume(current_volume - 5)
+                pyautogui.press("volumedown")
+            elif "mute" in command.lower():
+                set_volume(0)
+                pyautogui.press("volumemute")
+            elif "unmute" in command.lower():
+                set_volume(50)  # Set to a default volume, or implement a more refined method
+                pyautogui.press("volumeup")
+
+        except sr.UnknownValueError:
+            print("Could not understand audio")  # Debug statement
+        except sr.RequestError as e:
+            print(f"Could not request results; {e}")  # Debug statement
+
+
 if __name__ == '__main__':
+    # Start the voice command thread
+    voice_thread = threading.Thread(target=listen_for_voice_commands, daemon=True)
+    voice_thread.start()
+
     # Get the port from the environment variable, default to 5000
     port = int(os.environ.get("PORT", 5000))
     print(f"Starting server on port {port}...")  # Debug statement
