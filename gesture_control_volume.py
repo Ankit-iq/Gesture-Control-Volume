@@ -2,6 +2,7 @@ from flask import Flask, render_template, Response, jsonify
 import cv2
 import mediapipe as mp
 import pyautogui
+import os
 
 app = Flask(__name__)
 
@@ -78,4 +79,7 @@ def volume():
     return jsonify(volume=get_volume())
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Get the port from the environment variable, default to 5000
+    port = int(os.environ.get("PORT", 5000))
+    print(f"Starting server on port {port}...")  # Debug statement
+    app.run(host='0.0.0.0', port=port)
