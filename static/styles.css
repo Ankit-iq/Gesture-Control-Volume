@@ -1,0 +1,55 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #1a1a1a;
+    color: #ffffff;
+    overflow: hidden;
+}
+
+.container {
+    text-align: center;
+    padding: 20px;
+}
+
+.video-container {
+    margin: 20px 0;
+}
+
+#video {
+    width: 100%;
+    max-width: 600px;
+    border: 2px solid #00ffcc;
+    box-shadow: 0 0 20px #00ffcc;
+}
+
+.neon-text {
+    font-size: 2.5rem;
+    text-shadow:
+        0 0 5px #00ffcc,
+        0 0 10px #00ffcc,
+        0 0 15px #00ffcc,
+        0 0 20px #00ffcc;
+}
+
+.controls {
+    margin-top: 20px;
+}
+
+.neon-button {
+    background-color: transparent;
+    border: 2px solid #00ffcc;
+    color: #00ffcc;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-shadow:
+        0 0 5px #00ffcc,
+        0 0 10px #00ffcc;
+}
+
+.neon-button:hover {
+    background-color: #00ffcc;
+    color: #1a1a1a;
+    box-shadow: 0 0 20px #00ffcc, 0 0 30px #00ffcc;
+}

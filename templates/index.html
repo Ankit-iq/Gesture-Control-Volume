@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Gesture Volume Control</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="neon-text">Hand Gesture Volume Control</h1>
+        <div class="video-container">
+            <img src="{{ url_for('video_feed') }}" id="video" alt="Video Feed">
+        </div>
+        <div class="controls">
+            <h2 class="neon-text">Current Volume: <span id="volume-level">50</span>%</h2>
+            <button class="neon-button" onclick="muteVolume()">Mute</button>
+        </div>
+    </div>
+    <script>
+        function updateVolume() {
+            fetch('/volume')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('volume-level').innerText = data.volume;
+                });
+        }
+
+        function muteVolume() {
+            document.getElementById('volume-level').innerText = "0";
+            // Optionally, you can implement the mute action here if needed
+        }
+
+        setInterval(updateVolume, 1000); // Update volume every second
+    </script>
+</body>
+</html>
